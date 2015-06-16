@@ -28,15 +28,10 @@ def kmeans(dataSet, k):
 	#print clusterAssment
 	clusterChanged = True 
 	
-	
-	
-	
 	## step 1: init centroids for each cluster
 	centroids = initCentroids(dataSet, k) 
 	#print centroids
 	#print centroids[1,:]
-	
-	
 	 
 	while clusterChanged:  
 		clusterChanged = False
@@ -70,9 +65,6 @@ def kmeans(dataSet, k):
 #show your cluster only available with 2-D data  
 def showCluster(dataSet, k, centroids, clusterAssment):
 	numSamples, dim = dataSet.shape  
-	
-	
-	
 	
 	mark = ['or', 'ob', 'og', 'ok', '^r', '+r', 'sr', 'dr', '<r', 'pr'] 
 	if k > len(mark):  

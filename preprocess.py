@@ -38,21 +38,13 @@ TYPE9 = u'辦公商業大樓'
 
 USE_TYPE = u'住家用'
 
-
-
-
-
-
-
-
-
-
 def preprocess(filename):
     file = open(filename, 'r')
     lines = file.readlines()
     lines.pop(0) # remove colunm title
 
-    dataset = []
+    dataSet = []
+    priceSet = []
 
     for line in lines:
         dataArr = line.decode('big5').strip().split(',')
@@ -169,14 +161,13 @@ def preprocess(filename):
             latlng = getLatLng(dataArr[2].encode('utf-8'))
             sleep(0.2)
             print latlng
-            dataset.append([float(latlng[0]), float(latlng[1]), float(scale), int(bedroom), 
-                int(living_room), int(restroom), int(price)])
+            dataSet.append([float(latlng[0]), float(latlng[1]), float(scale), int(bedroom), 
+                int(living_room), int(restroom)])
+            #dataset.append([float(latlng[0]), float(latlng[1])])
+            priceSet.append(int(price))
     #print lines[0].decode('big5')
-    print dataset
-    print mat(dataset)
-    return dataset
-
-
+    print dataSet
+    return dataSet, priceSet
 
 def getLatLng(address):
     #print address
