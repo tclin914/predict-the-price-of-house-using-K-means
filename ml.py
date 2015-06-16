@@ -1,19 +1,7 @@
 # -*- coding: utf-8 -*- 
-#################################################  
-# kmeans: k-means cluster  
-# Author : roberthuang  
-# Date   : 2015-06-15  
-# type   : main function
-#################################################
-
-
-from kmeans import kmeans,euclDistance,initCentroids,showCluster
-import sys
-from numpy import*
-import time  
-import matplotlib.pyplot as plt
 import urllib, urllib2, json
 from time import sleep
+from numpy import *
 
 DISTRICT1 = u'中正區'
 DISTRICT2 = u'大同區'
@@ -106,6 +94,12 @@ def preprocess(filename):
             target = -1
         assert target != -1
 
+        # lat lng
+        if target != 1:
+            latlng = getLatLng(dataArr[2].encode('utf-8'))
+            sleep(0.2)
+            print latlng
+
         # area
         #area = dataArr[3]
 
@@ -170,16 +164,12 @@ def preprocess(filename):
         price = dataArr[22]
 
         if dataArr[12] == USE_TYPE:
-            # lat lng
-            latlng = getLatLng(dataArr[2].encode('utf-8'))
-            sleep(0.2)
-            print latlng
-            dataset.append([float(latlng[0]), float(latlng[1]), float(scale), int(bedroom), 
-                int(living_room), int(restroom), int(price)])
+            print dataArr[12]
+            dataset.append([latlng[0], latlng[1], scale, bedroom, 
+                living_room, restroom, price])
     #print lines[0].decode('big5')
     print dataset
     print mat(dataset)
-    return dataset
 
 
 
@@ -199,29 +189,9 @@ def getLatLng(address):
     return lat, lng
 
 
-	
-## step 1: load data  
-print "step 1: load data..."     	
-#dataSet = []    	
-#fileIn=open(sys.argv[1])
-#for line in fileIn.readlines():
-	#lineArr=line.strip().split('\t')
-	#try:
-		#dataSet.append([float(lineArr[0]), float(lineArr[1])])
-	#except ValueError:
-		#print lineArr	
-#print dataSet
-dataSet = preprocess(sys.argv[1])
 
 
-##step 2: clustering...
-dataSet = mat(dataSet) 
-print dataSet
-k = 10
-centroids, clusterAssment = kmeans(dataSet, k)  
 
-
-## step 3: show the result  
-print "step 3: show the result..."  
-showCluster(dataSet, k, centroids, clusterAssment)  
+if __name__ == '__main__':
+    preprocess('A_lvr_land_A.txt')
 
