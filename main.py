@@ -64,7 +64,9 @@ for i in range(0, len(train)):
 # average per class
 average = [0] * k
 for i in range(k):
-    average[i] = total[i] / count[i]
+    if count[i] != 0:
+        average[i] = total[i] / count[i]
+        #print average[i]
 
 # calculate error rate
 error = [0] * len(test)
@@ -76,7 +78,7 @@ for i in range(k):
             diff_percent = (diff / test_priceSet[j]) * 100
             #print 'diff %f ' % diff_percent
             error[j] = diff_percent
-    #print 'average %s' % average[i]
+    print 'average %s' % average[i]
 
 # calculus average error
 average_error = 0
