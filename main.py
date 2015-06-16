@@ -16,88 +16,81 @@ import pickle
 
 ## step 1: load data  
 print "step 1: load data..."     	
-#dataSet = []    	
-#fileIn=open(sys.argv[1])
-#for line in fileIn.readlines():
-	#lineArr=line.strip().split('\t')
-	#try:
-		#dataSet.append([float(lineArr[0]), float(lineArr[1])])
-	#except ValueError:
-		#print lineArr	
-#print dataSet
-dataSet, priceSet = preprocess(sys.argv[1])
+#dataSet, priceSet = preprocess(sys.argv[1])
 
-with open('data.txt', 'wb') as f:
-    pickle.dump(dataSet, f)
+#with open('data.txt', 'wb') as f:
+    #pickle.dump(dataSet, f)
 
 with open('data.txt', 'rb') as f:
-    mylist = pickle.load(f)
+    dataSet = pickle.load(f)
 
-print mylist 
-
-with open('price.txt', 'wb') as f:
-    pickle.dump(priceSet, f)
+#with open('price.txt', 'wb') as f:
+    #pickle.dump(priceSet, f)
 
 with open('price.txt', 'rb') as f:
-    mylist = pickle.load(f)
-
-print mylist 
+    priceSet = pickle.load(f)
 
 ##step 2: clustering...
 dataSet = mat(dataSet)
-k = 10
+k = 12
 train = dataSet[:len(dataSet) / 2]
 test = dataSet[len(dataSet) / 2:]
 test_priceSet = priceSet[len(priceSet) / 2:]
 
 centroids, clusterAssment = kmeans(train, k) 
 
-
-test_index = []
-for data in test:
+# distinguish
+test_index = [-1] * len(test)
+for i in range(0, len(test)):
+    min = -1
     for j in range(k):
-        min = -1
-        distance = euclDistance(centroids[j], data)
+        distance = euclDistance(centroids[j], test[i])
         if min == -1:
             min = distance
             test_index[i] = j
         elif distance < min:
             min = distance
             test_index[i] = j
-    print test_index[i]
+    #print test_index[i]
 
-# calculus average price per class in train data
-# total price per class
+# calculate average price per class in train data
 total = [0] * k
-for i in range(len(train)):
-    index = clusterAssment[i, 0]
-    total[index] = total[index] + priceSet[i]
-
-# count per class
 count = [0] * k
-for item in clusterAssment:
-    count[item[0]] = count[item[0]] + 1
-
-print count
+for i in range(0, len(train)):
+    index = int(clusterAssment[i, 0])
+    total[index] = total[index] + priceSet[i]
+    count[index] = count[index] + 1
 
 # average per class
 average = [0] * k
+for i in range(k):
+    average[i] = total[i] / count[i]
 
+# calculate error rate
+error = [0] * len(test)
+for i in range(k):
+    for j in range(0, len(test)):
+        if test_index[j] == i:
+            print test_priceSet[j]
+            diff = fabs(test_priceSet[j] - average[i])
+            diff_percent = (diff / test_priceSet[j]) * 100
+            #print 'diff %f ' % diff_percent
+            error[j] = diff_percent
+    #print 'average %s' % average[i]
 
-total = 0
-count = 0
-for i in range(len(train)):
-    if clusterAssment[i, 0] == index:
-        total = total + priceSet[i]
-        count = count + 1
-print count
-print total
-price = total / count
-print price
+# calculus average error
+average_error = 0
+total_error = 0
+for e in error:
+    total_error = total_error + e
+print 'average error rate %f ' % (total_error / len(test))
 
-print test_priceSet[0]
-
-
+plt.plot(range(0, len(test)), error, marker='o') 
+plt.xlabel('')
+plt.ylabel('error %')
+#plt.ylim([0, 100])
+plt.xlim([0, len(test)])
+plt.show()
 ## step 3: show the result  
 #print "step 3: show the result..."  
 #showCluster(dataSet, k, centroids, clusterAssment)  
